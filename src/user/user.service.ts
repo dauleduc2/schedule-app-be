@@ -9,7 +9,6 @@ export class UserService {
     constructor(private readonly userRepository: UserRepository) {}
 
     async updateOne(user: User): Promise<User> {
-        user.createAt = new Date().getTime();
         return await this.userRepository.save(user);
     }
 

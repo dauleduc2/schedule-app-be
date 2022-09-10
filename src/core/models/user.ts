@@ -5,24 +5,19 @@ import * as joi from 'joi';
 
 const joiPassword: JoiPasswordExtend = joi.extend(joiPasswordExtendCore);
 
-export enum UserStatus {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-}
-
-export enum UserRole {
-    ADMIN = 'admin',
-    USER = 'user',
-}
 @Entity()
 export class User {
-    @ApiProperty({ description: 'username' })
+    @ApiProperty({ description: 'id' })
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ApiProperty({ description: 'Name' })
     @Column({ default: null })
     name: string;
+
+    @ApiProperty({ description: 'User name' })
+    @Column({ default: null })
+    username: string;
 
     @ApiProperty({ description: 'Password' })
     @Column({ default: null })
@@ -31,12 +26,6 @@ export class User {
     @ApiProperty({ description: 'Email' })
     @Column({ default: null })
     email: string;
-
-    @ApiProperty({ description: 'Create date' })
-    createAt: number;
-
-    @ApiProperty({ description: 'Create date' })
-    updateAt: number;
 }
 
 export const userValidateSchema = {
