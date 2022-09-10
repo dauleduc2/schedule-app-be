@@ -13,7 +13,8 @@ export const config = {
 
     FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID || '',
     FACEBOOK_SECRET: process.env.FACEBOOK_SECRET || '',
-    FACEBOOK_CLIENT_REDIRECT_URL: process.env.FACEBOOK_CLIENT_REDIRECT_URL || 'http://localhost:4000',
+    FACEBOOK_CLIENT_REDIRECT_URL:
+        process.env.FACEBOOK_CLIENT_REDIRECT_URL || 'http://localhost:4000',
 
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'this is secret',
     CLIENT_URL: (process.env.CLIENT_URL || 'http://localhost:3000').split(','),

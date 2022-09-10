@@ -8,7 +8,10 @@ import { constant } from 'src/core';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly jwtService: JwtService, private readonly userRepository: UserRepository) {}
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly userRepository: UserRepository,
+    ) {}
 
     async createOne(name: string, email: string, password: string) {
         const user = new User();

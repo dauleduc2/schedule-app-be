@@ -31,5 +31,10 @@ export const vPagingFilter = {
     page: joi.number().failover(currentPage).min(0).failover(0).required(),
     pageSize: joi.number().failover(pageSize).min(0).failover(12).required(),
     orderBy: joi.string().allow('').failover(orderBy).required(),
-    order: joi.string().allow('').failover(SortOrder.ASC).valid(SortOrder.ASC, SortOrder.DESC).required(),
+    order: joi
+        .string()
+        .allow('')
+        .failover(SortOrder.ASC)
+        .valid(SortOrder.ASC, SortOrder.DESC)
+        .required(),
 };

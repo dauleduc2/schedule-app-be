@@ -13,7 +13,10 @@ import { LoginDTO, RegisterDTO, vLoginDTO, vRegisterDTO } from './dto';
 export class AuthController {
     static endPoint = '/api/auth';
 
-    constructor(private readonly authService: AuthService, private readonly userService: UserService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly userService: UserService,
+    ) {}
 
     @Post('/register')
     @ApiOperation({ summary: 'Create new user' })
@@ -21,11 +24,16 @@ export class AuthController {
     @UsePipes(new JoiValidatorPipe(vRegisterDTO))
     async cRegister(@Body() body: RegisterDTO, @Res() res: Response) {
         const existedUser = await this.userService.findOne('email', body.email);
-        if (existedUser) throw new HttpException({ email: 'field.field-taken' }, StatusCodes.BAD_REQUEST);
+        if (existedUser)
+            throw new HttpException({ email: 'field.field-taken' }, StatusCodes.BAD_REQUEST);
         const newUser = await this.authService.createOne(body.name, body.email, body.password);
 
         const accessToken = await this.authService.createAccessToken(newUser);
-        return res.cookie(constant.authController.tokenName, accessToken, { maxAge: constant.authController.registerCookieTime }).send({ token: accessToken });
+        return res
+            .cookie(constant.authController.tokenName, accessToken, {
+                maxAge: constant.authController.registerCookieTime,
+            })
+            .send({ token: accessToken });
     }
 
     @Post('/login')
@@ -34,13 +42,28 @@ export class AuthController {
     @UsePipes(new JoiValidatorPipe(vLoginDTO))
     async cLogin(@Body() body: LoginDTO, @Res() res: Response) {
         const user = await this.userService.findOne('email', body.email);
-        if (!user) throw new HttpException({ errorMessage: 'error.invalid-password-username' }, StatusCodes.BAD_REQUEST);
+        if (!user)
+            throw new HttpException(
+                { errorMessage: 'error.invalid-password-username' },
+                StatusCodes.BAD_REQUEST,
+            );
 
-        const isCorrectPassword = await this.authService.decryptPassword(body.password, user.password);
-        if (!isCorrectPassword) throw new HttpException({ errorMessage: 'error.invalid-password-username' }, StatusCodes.BAD_REQUEST);
+        const isCorrectPassword = await this.authService.decryptPassword(
+            body.password,
+            user.password,
+        );
+        if (!isCorrectPassword)
+            throw new HttpException(
+                { errorMessage: 'error.invalid-password-username' },
+                StatusCodes.BAD_REQUEST,
+            );
 
         const accessToken = await this.authService.createAccessToken(user);
-        return res.cookie(constant.authController.tokenName, accessToken, { maxAge: constant.authController.loginCookieTime }).send({ token: accessToken });
+        return res
+            .cookie(constant.authController.tokenName, accessToken, {
+                maxAge: constant.authController.loginCookieTime,
+            })
+            .send({ token: accessToken });
     }
 
     @Post('/logout')

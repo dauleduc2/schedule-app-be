@@ -20,7 +20,13 @@ export function router(app: INestApplication) {
         .setTitle('mono-nestjs-kit')
         .setDescription('The APIs for mono-nestjs-kit')
         .setVersion('1.0')
-        .addBearerAuth({ name: 'Authentication', bearerFormat: 'Bearer', scheme: 'Bearer', in: 'Header', type: 'http' })
+        .addBearerAuth({
+            name: 'Authentication',
+            bearerFormat: 'Bearer',
+            scheme: 'Bearer',
+            in: 'Header',
+            type: 'http',
+        })
         .build();
 
     const document = SwaggerModule.createDocument(app, configSwagger);
@@ -37,10 +43,15 @@ export function router(app: INestApplication) {
             const resTime = tokens['response-time'](req, res);
             const reqMethod = tokens.method(req, res);
             const reqUrl = tokens.url(req, res);
-            const reqIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            const reqIp =
+                req.headers['x-real-ip'] ||
+                req.headers['x-forwarded-for'] ||
+                req.connection.remoteAddress;
             const reqDate = tokens['date'](req, res);
 
-            const content = `${moment(reqDate).format('YYYY-MM-DD HH:mm:ss')} ${reqIp} ${reqMethod} ${reqUrl} ${resStatus} - ${resTime} ms`;
+            const content = `${moment(reqDate).format(
+                'YYYY-MM-DD HH:mm:ss',
+            )} ${reqIp} ${reqMethod} ${reqUrl} ${resStatus} - ${resTime} ms`;
             winstonLogger.info({
                 resStatus,
                 resTime,
