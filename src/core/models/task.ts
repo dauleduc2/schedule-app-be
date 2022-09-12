@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import * as joi from 'joi';
-import { Image } from './image';
+import { ImageUrl } from './image';
 import { User } from './user';
 
 @Entity()
@@ -39,8 +39,8 @@ export class Task {
     toDate: string;
 
     @ApiProperty({ description: 'image' })
-    @OneToMany(() => Image, (image) => image)
-    image: Image[];
+    @OneToMany(() => ImageUrl, (image) => image)
+    image: ImageUrl[];
 
     @ApiProperty({ description: 'owner' })
     @ManyToOne(() => User, (user) => user)

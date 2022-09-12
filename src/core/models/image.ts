@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import * as joi from 'joi';
 
 @Entity()
-export class Image {
+export class ImageUrl {
     @ApiProperty({ description: 'id' })
     @PrimaryGeneratedColumn('uuid')
     id: string;

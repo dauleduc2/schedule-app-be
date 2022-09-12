@@ -1,6 +1,6 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from './core';
-import { Image, Task, User } from './core/models';
+import { ImageUrl, Task, User } from './core/models';
 
 export const DbModule = TypeOrmModule.forRoot({
     type: 'mysql',
@@ -11,6 +11,6 @@ export const DbModule = TypeOrmModule.forRoot({
     database: config.DB_NAME,
     synchronize: true,
     keepConnectionAlive: true,
-    entities: [User, Task, Image],
+    entities: [User, Task, ImageUrl],
     extra: { connectionLimit: 1 },
 });
