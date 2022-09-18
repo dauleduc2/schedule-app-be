@@ -13,10 +13,11 @@ export class AuthService {
         private readonly userRepository: UserRepository,
     ) {}
 
-    async createOne(name: string, email: string, password: string) {
+    async createOne(name: string, email: string, password: string, username: string) {
         const user = new User();
         user.name = name;
         user.email = email;
+        user.username = username;
         user.password = await this.encryptPassword(password, constant.default.hashingSalt);
         return await this.userRepository.save(user);
     }

@@ -23,12 +23,22 @@ export class AuthController {
     @ApiCreatedResponse({ type: String, description: 'access token' })
     @UsePipes(new JoiValidatorPipe(vRegisterDTO))
     async cRegister(@Body() body: RegisterDTO, @Res() res: Response) {
-        const existedUser = await this.userService.findOne('email', body.email);
+        const existedUser = await this.userService.findOne('username', body.username);
         if (existedUser)
-            throw new HttpException({ email: 'field.field-taken' }, StatusCodes.BAD_REQUEST);
-        const newUser = await this.authService.createOne(body.name, body.email, body.password);
+            throw new HttpException(
+                { username: 'username already existed' },
+                StatusCodes.BAD_REQUEST,
+            );
+
+        const newUser = await this.authService.createOne(
+            body.name,
+            body.email,
+            body.password,
+            body.username,
+        );
 
         const accessToken = await this.authService.createAccessToken(newUser);
+
         return res
             .cookie(constant.authController.tokenName, accessToken, {
                 maxAge: constant.authController.registerCookieTime,
@@ -41,7 +51,7 @@ export class AuthController {
     @ApiCreatedResponse({ type: String, description: 'access token' })
     @UsePipes(new JoiValidatorPipe(vLoginDTO))
     async cLogin(@Body() body: LoginDTO, @Res() res: Response) {
-        const user = await this.userService.findOne('email', body.email);
+        const user = await this.userService.findOne('username', body.username);
         if (!user)
             throw new HttpException(
                 { errorMessage: 'error.invalid-password-username' },
