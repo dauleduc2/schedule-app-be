@@ -96,6 +96,9 @@ export class UserController {
         const user = await this.userService.findOne('id', req.user.id);
         // update field
         user.name = body.name;
+        user.email = body.email;
+        user.username = body.username;
+
         await this.userService.updateOne(user);
         return res.send();
     }
