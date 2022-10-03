@@ -26,6 +26,10 @@ export class User {
     @ApiProperty({ description: 'Email' })
     @Column({ default: null })
     email: string;
+
+    @ApiProperty({ description: 'Balance' })
+    @Column({ default: null })
+    balance: number;
 }
 
 export const userValidateSchema = {
