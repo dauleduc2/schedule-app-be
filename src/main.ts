@@ -13,6 +13,7 @@ import { CustomLoggerService } from './core/providers';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { logger: new CustomLoggerService() });
 
+    app.setGlobalPrefix('api');
     router(app);
 
     await app.listen(config.PORT, () => {

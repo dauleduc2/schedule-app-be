@@ -11,7 +11,7 @@ import { LoginDTO, RegisterDTO, vLoginDTO, vRegisterDTO } from './dto';
 @ApiTags('Authentication')
 @Controller(AuthController.endPoint)
 export class AuthController {
-    static endPoint = '/api/auth';
+    static endPoint = '/auth';
 
     constructor(
         private readonly authService: AuthService,

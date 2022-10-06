@@ -7,10 +7,11 @@ import { UserModule } from 'src/user/user.module';
 import { Connection } from 'typeorm';
 import { SpendingController } from './spending.controller';
 import { SpendingService } from './spending.service';
+import { SpendingsController } from './spendings.controller';
 
 @Module({
     imports: [AuthModule, UserModule, TypeOrmModule.forFeature([User])],
-    controllers: [SpendingController],
+    controllers: [SpendingController, SpendingsController],
     providers: [
         SpendingService,
         {

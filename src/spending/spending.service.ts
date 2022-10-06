@@ -24,4 +24,13 @@ export class SpendingService {
     async updateOne(spending: Spending): Promise<Spending> {
         return await this.spendingRepository.save(spending);
     }
+
+    async getSpendingListWithCount(): Promise<[Spending[], number]> {
+        return await this.spendingRepository.findAndCountC({
+            order: 'DESC',
+            orderBy: 'id',
+            where: {},
+            select: ['id', 'note', 'description'],
+        });
+    }
 }
