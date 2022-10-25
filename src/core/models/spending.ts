@@ -3,6 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import * as joi from 'joi';
 import { User } from './user';
 
+export type SpendingType = 'INCOME' | 'WITHDRAW';
+
 @Entity()
 export class Spending {
     @ApiProperty({ description: 'id' })
@@ -16,6 +18,10 @@ export class Spending {
     @ApiProperty({ description: 'description' })
     @Column({ default: null })
     description: string;
+
+    @ApiProperty({ description: 'type' })
+    @Column({ default: null })
+    type: SpendingType;
 
     @ApiProperty({ description: 'value' })
     @Column({ default: null })
@@ -40,4 +46,5 @@ export const spendingValidateSchema = {
     value: joi.number().required(),
     note: joi.string().required(),
     date: joi.string().required(),
+    type: joi.string().valid('INCOME', 'WITHDRAW').required(),
 };

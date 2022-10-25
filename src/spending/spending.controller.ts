@@ -12,18 +12,18 @@ import {
     UsePipes,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { JoiValidatorPipe } from 'src/core/pipe/validator.pipe';
 import { AddNewSpending, vAddNewSpending } from './dto/addNewSpending';
-import { UpdateSpending, vUpdateSpending } from './dto/updateSpending';
+import { UpdateSpending } from './dto/updateSpending';
 import { SpendingService } from './spending.service';
 
 @Controller('spending')
 @ApiTags('Spending')
 @ApiBearerAuth()
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class SpendingController {
     constructor(private readonly spendingService: SpendingService) {}
 
@@ -38,8 +38,8 @@ export class SpendingController {
     @Post('/')
     @ApiOperation({ summary: 'Create new spending' })
     @UsePipes(new JoiValidatorPipe(vAddNewSpending))
-    async cAddNewSpending(@Body() body: AddNewSpending, @Res() res: Response) {
-        const newSpending = await this.spendingService.createOne(body);
+    async cAddNewSpending(@Body() body: AddNewSpending, @Res() res: Response, @Req() req: Request) {
+        const newSpending = await this.spendingService.createOne(req.user.id, body);
         if (!newSpending)
             return res.status(500).send({
                 errorMessage: 'error.internal_server_error for create new spending',

@@ -1,13 +1,8 @@
 import { PagingFilter, PagingResult } from '../interface/repositories.interface';
-import { FindConditions, FindManyOptions, Repository, SelectQueryBuilder } from 'typeorm';
-import { User } from '../models';
-import { asyncScheduler } from 'rxjs';
-
-interface CustomFindManyOptions<Entity> extends Omit<FindManyOptions<Entity>, 'order' | 'where'> {
-    orderBy: keyof Entity | null;
-    order: 'ASC' | 'DESC';
-    where: FindConditions<Entity>;
-}
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { FilterOptionsBase } from '../interface/filter';
+import { isFilterRange } from '../util/objectType';
+import { getDateFromString } from '../util/date';
 
 export class RepositoryService<T> extends Repository<T> {
     protected defaultQuery(tableName: string) {
@@ -47,7 +42,7 @@ export class RepositoryService<T> extends Repository<T> {
     }
 
     public async findManyByField(field: keyof T, value: any) {
-        return await this.createQueryBuilder()
+        return this.createQueryBuilder()
             .where(`"${field.toString()}" = :value`, { value })
             .getMany();
     }
@@ -59,16 +54,32 @@ export class RepositoryService<T> extends Repository<T> {
         orderBy,
         where = {},
         select = [],
-    }: CustomFindManyOptions<T>): Promise<[T[], number]> {
+        leftJoinAndSelect,
+    }: FilterOptionsBase<T>): Promise<[T[], number]> {
         const { tableName } = this.metadata;
         const query = this.createQueryBuilder(tableName);
 
         // query for exact key
         for (const [key, value] of Object.entries(where)) {
-            const newValue = String(value) as string;
-            const queryOptions = this.queryWithOptions(tableName, key, [newValue]);
+            // if object is range time, it's will be query with between time. Else for normal case
 
-            query.andWhere(`(${queryOptions})`);
+            if (isFilterRange(value)) {
+                const { fromDate, toDate } = value;
+                if (fromDate && toDate) {
+                    query.andWhere(`${tableName}.${key} BETWEEN :fromDate AND :toDate`, {
+                        fromDate: getDateFromString(fromDate).toISOString(),
+                        toDate: getDateFromString(toDate).toISOString(),
+                    });
+                }
+            } else {
+                const newValue = String(value);
+
+                if (newValue !== '' && typeof value != 'object') {
+                    const queryOptions = this.queryWithOptions(tableName, key, [newValue]);
+
+                    query.andWhere(`(${queryOptions})`);
+                }
+            }
         }
 
         // query for orderBy
@@ -85,6 +96,10 @@ export class RepositoryService<T> extends Repository<T> {
         }
         if (selectFields.length) query.select(selectFields);
 
-        return await [await query.getMany(), await query.getCount()];
+        for (const item of leftJoinAndSelect) {
+            query.leftJoinAndSelect(`${tableName}.${String(item.relation)}`, item.alias);
+        }
+
+        return [await query.getMany(), await query.getCount()];
     }
 }

@@ -28,8 +28,6 @@ export class AuthGuard implements CanActivate {
 
         if (!user) throw new HttpException({}, StatusCodes.UNAUTHORIZED);
 
-        // if (roles.length && !roles.includes(user.role)) throw new HttpException({}, StatusCodes.UNAUTHORIZED);
-
         user.password = '';
         req.user = user;
 

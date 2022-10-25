@@ -1,6 +1,6 @@
 import * as joi from 'joi';
 import { ApiProperty } from '@nestjs/swagger';
-import { spendingValidateSchema } from 'src/core/models/spending';
+import { SpendingType, spendingValidateSchema } from 'src/core/models/spending';
 
 export class AddNewSpending {
     @ApiProperty({ description: 'title', example: 'com hop' })
@@ -11,6 +11,9 @@ export class AddNewSpending {
 
     @ApiProperty({ description: 'note', example: 'day la note' })
     note: string;
+
+    @ApiProperty({ description: 'type', example: 'INCOME' })
+    type: SpendingType;
 
     @ApiProperty({ description: 'value', example: '3.5' })
     value: number;
@@ -25,4 +28,5 @@ export const vAddNewSpending = joi.object<AddNewSpending>({
     note: spendingValidateSchema.note,
     value: spendingValidateSchema.value,
     date: spendingValidateSchema.date,
+    type: spendingValidateSchema.type,
 });
